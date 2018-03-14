@@ -57,7 +57,7 @@
     </dependencies>
 
     <build>
-        <finalName>test-demo</finalName>
+        <finalName>live-demo</finalName>
         <plugins>
             <plugin>
                 <groupId>com.googlecode.maven-download-plugin</groupId>
@@ -91,6 +91,7 @@
                             <descriptors>
                                 <descriptor>src/main/assembly/assembly.xml</descriptor>
                             </descriptors>
+                            <outputDirectory>${project.basedir}/../</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

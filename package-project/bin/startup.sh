@@ -4,8 +4,8 @@ PRG="$0"
 PRGDIR=`dirname "$PRG"`
 [ -z "$DEMO_HOME" ] && DEMO_HOME=`cd "$PRGDIR/.." >/dev/null; pwd`
 
-AGENT_DIR=$DEMO_HOME/skywalking-agent
-COLLECTOR_SERVER_LIST=localhost:10800
+[ -z "$AGENT_DIR" ] && AGENT_DIR=$DEMO_HOME/skywalking-agent
+[ -z "$COLLECTOR_SERVER_LIST" ] && COLLECTOR_SERVER_LIST=localhost:10800
 
 _RUNJAVA=${JAVA_HOME}/bin/java
 [ -z "$JAVA_HOME" ] && _RUNJAVA=java
@@ -32,8 +32,9 @@ echo "kill projectD service"
 ps -ef | grep projectD | awk '{print $2}' | xargs kill -9
 
 echo "start kafka service"
-sh $DEMO_HOME/kafka_2.11-1.0.0/bin/zookeeper-server-start.sh $DEMO_HOME/kafka_2.11-1.0.0/config/zookeeper.properties 2>/dev/null 1> /dev/null &
-sh $DEMO_HOME/kafka_2.11-1.0.0/bin/kafka-server-start.sh $DEMO_HOME/kafka_2.11-1.0.0/config/server.properties 2>/dev/null 1> /dev/null &
+nohup $DEMO_HOME/kafka_2.11-1.0.0/bin/zookeeper-server-start.sh $DEMO_HOME/kafka_2.11-1.0.0/config/zookeeper.properties 2>/dev/null 1> /dev/null &
+sleep 5
+nohup $DEMO_HOME/kafka_2.11-1.0.0/bin/kafka-server-start.sh $DEMO_HOME/kafka_2.11-1.0.0/config/server.properties 2>/dev/null 1> /dev/null &
 
 echo "start eureka service"
 $_RUNJAVA -jar $DEMO_HOME/eureka-service/eureka-service.jar 2>/dev/null 1> /dev/null &
