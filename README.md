@@ -19,6 +19,7 @@ Visit the `http://localhost:8764/projectA/test` in your browser after execute th
 ```
 > export AGENT_DIR=${AGENT_HOME}
 > export COLLECTOR_SERVER_LIST=localhost:10800
-> cd test-demo-assembly/bin
+> tar -zxvf live-demo-assembly.tar.gz
+> cd live-demo/bin
 > ./startup.sh
 ```
