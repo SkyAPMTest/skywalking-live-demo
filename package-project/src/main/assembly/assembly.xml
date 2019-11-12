@@ -14,7 +14,7 @@
         </file>
 
         <file>
-            <source>${project.build.directory}/kafka_2.11-1.0.0.tgz</source>
+            <source>${project.build.directory}/kafka_2.11-2.3.0.tgz</source>
             <outputDirectory>/</outputDirectory>
         </file>
 

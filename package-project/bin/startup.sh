@@ -10,8 +10,8 @@ PRGDIR=`dirname "$PRG"`
 _RUNJAVA=${JAVA_HOME}/bin/java
 [ -z "$JAVA_HOME" ] && _RUNJAVA=java
 
-if [ ! -d "$DEMO_HOME/kafka_2.11-1.0.0" ]; then
-    tar -xvf $DEMO_HOME/kafka_2.11-1.0.0.tgz -C $DEMO_HOME
+if [ ! -d "$DEMO_HOME/kafka_2.11-2.3.0" ]; then
+    tar -xvf $DEMO_HOME/kafka_2.11-2.3.0.tgz -C $DEMO_HOME
 fi
 
 if [ ! -f "$DEMO_HOME/logs" ]; then
@@ -21,7 +21,7 @@ fi
 echo "kill kafka service"
 ps -ef | grep eureka-service | awk '{print $2}' | xargs kill -9
 echo "kill kafka service"
-ps -ef | grep kafka_2.11-1.0.0 | awk '{print $2}' | xargs kill -9
+ps -ef | grep kafka_2.11-2.3.0 | awk '{print $2}' | xargs kill -9
 echo "kill projectA service"
 ps -ef | grep projectA | awk '{print $2}' | xargs kill -9
 echo "kill projectB service"
@@ -32,9 +32,9 @@ echo "kill projectD service"
 ps -ef | grep projectD | awk '{print $2}' | xargs kill -9
 
 echo "start kafka service"
-nohup $DEMO_HOME/kafka_2.11-1.0.0/bin/zookeeper-server-start.sh $DEMO_HOME/kafka_2.11-1.0.0/config/zookeeper.properties 2>/dev/null 1> /dev/null &
+nohup $DEMO_HOME/kafka_2.11-2.3.0/bin/zookeeper-server-start.sh $DEMO_HOME/kafka_2.11-2.3.0/config/zookeeper.properties 2>/dev/null 1> /dev/null &
 sleep 5
-nohup $DEMO_HOME/kafka_2.11-1.0.0/bin/kafka-server-start.sh $DEMO_HOME/kafka_2.11-1.0.0/config/server.properties 2>/dev/null 1> /dev/null &
+nohup $DEMO_HOME/kafka_2.11-2.3.0/bin/kafka-server-start.sh $DEMO_HOME/kafka_2.11-2.3.0/config/server.properties 2>/dev/null 1> /dev/null &
 
 echo "start eureka service"
 $_RUNJAVA -jar $DEMO_HOME/eureka-service/eureka-service.jar 2>/dev/null 1> /dev/null &
@@ -102,4 +102,3 @@ else
 	echo "project A service started failure!"
 	exit 1
 fi
-

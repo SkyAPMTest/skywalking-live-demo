@@ -32,7 +32,6 @@
     </plugins>
   </build>
   <properties>
-    <skywalking.version>5.0.0-alpha-SNAPSHOT</skywalking.version>
     <log4j.version>2.6.2</log4j.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <kafka.version>1.0.0</kafka.version>

@@ -70,8 +70,8 @@
                             <goal>wget</goal>
                         </goals>
                         <configuration>
-                            <url>http://mirrors.hust.edu.cn/apache/kafka/1.0.0/kafka_2.11-1.0.0.tgz</url>
-                            <outputFileName>kafka_2.11-1.0.0.tgz</outputFileName>
+                            <url>https://www-eu.apache.org/dist/kafka/2.3.0/kafka_2.11-2.3.0.tgz</url>
+                            <outputFileName>kafka_2.11-2.3.0.tgz</outputFileName>
                             <outputDirectory>${project.build.directory}</outputDirectory>
                         </configuration>
                     </execution>
