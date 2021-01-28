@@ -22,7 +22,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>org.skywalking.springcloud.test.projectd.Consumer_Main</mainClass>
+                  <mainClass>test.skywalking.springcloud.test.projectd.Consumer_Main</mainClass>
                 </transformer>
               </transformers>
             </configuration>

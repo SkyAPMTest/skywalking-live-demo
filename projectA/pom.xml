@@ -42,6 +42,11 @@
             <artifactId>apm-toolkit-trace</artifactId>
             <version>${skywalking.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.skywalking</groupId>
+            <artifactId>apm-toolkit-log4j-2.x</artifactId>
+            <version>${skywalking.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
