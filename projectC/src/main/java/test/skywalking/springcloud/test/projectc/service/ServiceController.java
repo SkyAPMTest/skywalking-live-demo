@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
 import javax.annotation.PostConstruct;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static test.skywalking.springcloud.test.projectc.config.Constant.SAMPLE_RATE;
+
 @RestController
 @PropertySource("classpath:config.properties")
 public class ServiceController {
@@ -27,6 +30,8 @@ public class ServiceController {
     private String bootstrapServers;
 
     private final String topicName = "test-trace-topic";
+
+    private AtomicLong counter = new AtomicLong(0);
 
     @Autowired
     private HttpClientCaller httpClientCaller;
@@ -50,7 +55,9 @@ public class ServiceController {
 
     @RequestMapping("/projectC/{value}")
     public String home(@PathVariable("value") String value) throws InterruptedException, IOException {
-        logger.debug("calling /projectC/{value}");
+        if (counter.getAndIncrement() % SAMPLE_RATE == 0) {
+            logger.debug("calling /projectC/{value}");
+        }
         Thread.sleep(new Random().nextInt(3) * 1000);
         httpClientCaller.call("http://www.baidu.com");
 

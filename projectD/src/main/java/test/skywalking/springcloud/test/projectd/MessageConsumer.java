@@ -18,6 +18,7 @@ package test.skywalking.springcloud.test.projectd;
 
 import java.util.Arrays;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicLong;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -25,10 +26,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.skywalking.apm.toolkit.trace.Trace;
 
+import static test.skywalking.springcloud.test.projectd.config.Constant.SAMPLE_RATE;
+
 public class MessageConsumer extends Thread {
 
     private Logger logger = LogManager.getLogger(MessageConsumer.class);
-
+    private AtomicLong counter = new AtomicLong(0);
     private final KafkaConsumer<String, String> consumer;
 
     public MessageConsumer(String bootstrapServers, String topicName) {
@@ -60,10 +63,11 @@ public class MessageConsumer extends Thread {
         ConsumerRecords<String, String> records = consumer.poll(100);
         if (!records.isEmpty()) {
             for (ConsumerRecord<String, String> record : records) {
-                logger.info("header: {}", new String(record.headers().headers("TEST").iterator().next().value()));
-                logger.info("offset = {}, key = {}, value = {}", record.offset(), record.key(), record.value());
+                System.out.println(new String(record.headers().headers("TEST").iterator().next().value()));
             }
-            logger.info("consumer {}  message success.", records.count());
+            if (counter.getAndIncrement() % SAMPLE_RATE == 0) {
+                logger.info("consumer {}  message success.", records.count());
+            }
         }
 
     }
