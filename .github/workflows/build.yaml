@@ -55,7 +55,7 @@ jobs:
         env:
           HUB: skyapm
           SKIP_TEST: true
-        run: make build.agent docker.agent push.docker.agent
+        run: make -C skywalking build.agent docker.agent push.docker.agent
 
   build-demo:
     runs-on: ubuntu-latest
