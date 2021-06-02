@@ -69,7 +69,7 @@ jobs:
       - name: Build Agent
         env:
           SKIP_TEST: true
-        run: make -C skywalking build.agent docker.agent push.docker.agent
+        run: make -C skywalking build.all docker.agent push.docker.agent
 
   build-demo:
     runs-on: ubuntu-latest
