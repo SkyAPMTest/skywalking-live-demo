@@ -1,4 +1,4 @@
-FROM skyapm/agent
+FROM ghcr.io/skyapmtest/agent
 
 ARG TARGET_JAR
 
