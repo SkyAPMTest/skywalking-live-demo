@@ -1,0 +1,193 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: project-a
+  name: project-a
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: project-a
+  strategy: { }
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: project-a
+    spec:
+      containers:
+        - image: ghcr.io/skyapmtest/projecta
+          name: projecta
+          env:
+            - name: EUREKA_HOST
+              value: eureka
+          resources: { }
+status: { }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: project-a
+spec:
+  type: ClusterIP
+  selector:
+    app: project-a
+  ports:
+    - name: http
+      port: 8764
+      targetPort: 8764
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: project-b
+  name: project-b
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: project-b
+  strategy: { }
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: project-b
+    spec:
+      containers:
+        - image: ghcr.io/skyapmtest/projectb
+          name: projectb
+          resources: { }
+status: { }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: project-b
+spec:
+  type: ClusterIP
+  selector:
+    app: project-b
+  ports:
+    - name: http
+      port: 8762
+      targetPort: 8762
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: project-c
+  name: project-c
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: project-c
+  strategy: { }
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: project-c
+    spec:
+      containers:
+        - image: ghcr.io/skyapmtest/projectc
+          name: projectc
+          resources: { }
+status: { }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: project-c
+spec:
+  type: ClusterIP
+  selector:
+    app: project-c
+  ports:
+    - name: http
+      port: 8763
+      targetPort: 8763
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: project-d
+  name: project-d
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: project-d
+  strategy: { }
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: project-d
+    spec:
+      containers:
+        - image: ghcr.io/skyapmtest/projectd
+          name: projectd
+          resources: { }
+status: { }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: project-d
+spec:
+  type: ClusterIP
+  selector:
+    app: project-d
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: eureka
+  name: eureka
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: eureka
+  strategy: { }
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: eureka
+    spec:
+      containers:
+        - image: ghcr.io/skyapmtest/eureka-service
+          name: eureka-service
+          resources: { }
+status: { }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: eureka
+spec:
+  type: ClusterIP
+  selector:
+    app: eureka
+  ports:
+    - name: http
+      port: 8761
+      targetPort: 8761

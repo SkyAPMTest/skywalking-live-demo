@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  eureka:
+    image: ghcr.io/skyapmtest/eureka-service
+    healthcheck:
+      test: [ "CMD", "sh", "-c", "nc -z 127.0.0.1 8761" ]
+      interval: 5s
+      timeout: 60s
+      retries: 120
+
+  projectA:
+    image: ghcr.io/skyapmtest/projecta
+    environment:
+      SW_AGENT_NAME: projectA
+      EUREKA_HOST: eureka:8761
+    depends_on:
+      eureka:
+        condition: service_healthy
+
+  projectB:
+    image: ghcr.io/skyapmtest/projectb
+    environment:
+      SW_AGENT_NAME: projectB
+      EUREKA_HOST: eureka:8761
+    depends_on:
+      eureka:
+        condition: service_healthy
+
+  projectC:
+    image: ghcr.io/skyapmtest/projectc
+    environment:
+      SW_AGENT_NAME: projectC
+      EUREKA_HOST: eureka:8761
+    depends_on:
+      eureka:
+        condition: service_healthy
