@@ -15,12 +15,18 @@ services:
     image: ghcr.io/skyapmtest/projectc
     environment:
       - SW_AGENT_NAME=projectC
+    depends_on:
+      kafka:
+        condition: service_healthy
 
   projectd:
     image: ghcr.io/skyapmtest/projectd
     environment:
       - SW_AGENT_NAME=projectC
       - BOOTSTRAP_SERVERS=kafka
+    depends_on:
+      kafka:
+        condition: service_healthy
 
   zookeeper:
     image: zookeeper:3.4
