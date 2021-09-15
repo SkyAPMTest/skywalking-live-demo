@@ -1,5 +1,5 @@
 server:
-  port: 8764
+  port: 80
 spring:
   application:
     name: projecta

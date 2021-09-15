@@ -2,30 +2,64 @@ version: '2.1'
 
 services:
   projecta:
-    image: ghcr.io/skyapmtest/projecta
+    image: ghcr.io/skyapmtest/projecta:latest
     environment:
       - SW_AGENT_NAME=projectA
+    healthcheck:
+      test: [ "CMD", "sh", "-c", "nc -nz 127.0.0.1 80" ]
+      interval: 5s
+      timeout: 60s
+      retries: 120
+    depends_on:
+      projectb:
+        condition: service_healthy
+      projectc:
+        condition: service_healthy
 
   projectb:
-    image: ghcr.io/skyapmtest/projectb
+    image: ghcr.io/skyapmtest/projectb:latest
     environment:
       - SW_AGENT_NAME=projectB
+    healthcheck:
+      test: [ "CMD", "sh", "-c", "nc -nz 127.0.0.1 80" ]
+      interval: 5s
+      timeout: 60s
+      retries: 120
 
   projectc:
-    image: ghcr.io/skyapmtest/projectc
+    image: ghcr.io/skyapmtest/projectc:latest
     environment:
       - SW_AGENT_NAME=projectC
     depends_on:
       kafka:
         condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "sh", "-c", "nc -nz 127.0.0.1 80" ]
+      interval: 5s
+      timeout: 60s
+      retries: 120
 
   projectd:
-    image: ghcr.io/skyapmtest/projectd
+    image: ghcr.io/skyapmtest/projectd:latest
     environment:
       - SW_AGENT_NAME=projectC
-      - BOOTSTRAP_SERVERS=kafka
+      - BOOTSTRAP_SERVERS=kafka:9092
     depends_on:
       kafka:
+        condition: service_healthy
+
+  traffic-gen:
+    image: curlimages/curl
+    entrypoint: sh
+    command:
+      - -c
+      - |
+        while true; do
+          curl -s http://projecta/projectA/kezhenxu94
+          sleep 3
+        done
+    depends_on:
+      projecta:
         condition: service_healthy
 
   zookeeper:

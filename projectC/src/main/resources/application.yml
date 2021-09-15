@@ -1,5 +1,5 @@
 server:
-  port: 8763
+  port: 80
 spring:
   application:
     name: projectC
