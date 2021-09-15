@@ -31,12 +31,16 @@ public class ServiceController {
 
     private final String topicName = "test-trace-topic";
 
-    private AtomicLong counter = new AtomicLong(0);
+    private final AtomicLong counter = new AtomicLong(0);
 
-    @Autowired
-    private HttpClientCaller httpClientCaller;
+    private final HttpClientCaller httpClientCaller;
 
     private Properties producerProperties;
+
+    public ServiceController(
+        final HttpClientCaller httpClientCaller) {
+        this.httpClientCaller = httpClientCaller;
+    }
 
     @PostConstruct
     public void setUp() {
@@ -58,7 +62,6 @@ public class ServiceController {
         if (counter.getAndIncrement() % SAMPLE_RATE == 0) {
             logger.debug("calling /projectC/{value}");
         }
-        Thread.sleep(new Random().nextInt(3) * 1000);
         httpClientCaller.call("http://www.baidu.com");
 
         Producer<String, String> producer = new KafkaProducer<>(producerProperties);

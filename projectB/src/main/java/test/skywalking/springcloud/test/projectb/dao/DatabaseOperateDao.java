@@ -17,13 +17,15 @@ import static test.skywalking.springcloud.test.projectb.config.Constant.SAMPLE_R
 
 @Component
 public class DatabaseOperateDao {
-
     private static final Logger logger = LogManager.getLogger(DatabaseOperateDao.class);
 
-    private AtomicLong counter = new AtomicLong(0);
+    private final AtomicLong counter = new AtomicLong(0);
 
-    @Autowired
-    private DataSource dataSource;
+    private final DataSource dataSource;
+
+    public DatabaseOperateDao(final DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
     @Trace
     public void saveUser(String name) {
@@ -31,26 +33,13 @@ public class DatabaseOperateDao {
             logger.debug("Save user {}", name);
         }
         ActiveSpan.tag("user.name", name);
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        try {
-            connection = dataSource.getConnection();
-            preparedStatement = connection.prepareStatement("INSERT INTO user(name) VALUES(?)");
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement =
+                 connection.prepareStatement("INSERT INTO user(name) VALUES(?)")) {
             preparedStatement.setString(1, name == null ? "" : name);
             preparedStatement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                if (preparedStatement != null) {
-                    preparedStatement.close();
-                }
-
-                if (connection != null) {
-                    connection.close();
-                }
-            } catch (SQLException e) {
-            }
         }
     }
 
@@ -60,26 +49,13 @@ public class DatabaseOperateDao {
             logger.debug("select user {}", name);
         }
         ActiveSpan.tag("user.name", name);
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        try {
-            connection = dataSource.getConnection();
-            preparedStatement = connection.prepareStatement("SELECT * FROM user WHERE name =?");
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement =
+                 connection.prepareStatement("SELECT * FROM user WHERE name =?")) {
             preparedStatement.setString(1, name == null ? "" : name);
             preparedStatement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                if (preparedStatement != null) {
-                    preparedStatement.close();
-                }
-
-                if (connection != null) {
-                    connection.close();
-                }
-            } catch (SQLException e) {
-            }
         }
     }
 

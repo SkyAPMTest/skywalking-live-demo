@@ -1,9 +1,5 @@
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://${EUREKA_HOST:localhost:8761}/eureka/
 server:
   port: 8762
 spring:
   application:
-    name: projectB
+    name: projectb

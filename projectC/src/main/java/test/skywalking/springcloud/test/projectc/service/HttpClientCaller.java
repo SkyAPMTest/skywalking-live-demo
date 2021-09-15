@@ -16,9 +16,9 @@ import static test.skywalking.springcloud.test.projectc.config.Constant.SAMPLE_R
 
 @Component
 public class HttpClientCaller {
-
     private static final Logger logger = LogManager.getLogger(HttpClientCaller.class);
-    private AtomicLong counter = new AtomicLong(0);
+
+    private final AtomicLong counter = new AtomicLong(0);
 
     public void call(String url) throws IOException {
         if (counter.getAndIncrement() % SAMPLE_RATE == 0) {

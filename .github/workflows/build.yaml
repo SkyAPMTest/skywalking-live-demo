@@ -95,7 +95,7 @@ jobs:
           password: ${{ secrets.GHCR_TOKEN }}
       - name: Build Docker Images
         run: |
-          for project in {projectA,projectB,projectC,projectD,eureka-service}; do
+          for project in {projectA,projectB,projectC,projectD}; do
             docker build --build-arg TARGET_JAR=$project/target/$project.jar . -t ${HUB}/$(echo "$project" | tr '[:upper:]' '[:lower:]')
             docker push ${HUB}/$(echo "$project" | tr '[:upper:]' '[:lower:]')
           done

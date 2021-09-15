@@ -15,12 +15,15 @@ import static test.skywalking.springcloud.test.projectb.config.Constant.SAMPLE_R
 
 @RestController
 public class ServiceController {
-
     private static final Logger logger = LogManager.getLogger(ServiceController.class);
-    private AtomicLong counter = new AtomicLong(0);
 
-    @Autowired
-    private DatabaseOperateDao operateDao;
+    private final AtomicLong counter = new AtomicLong(0);
+
+    private final DatabaseOperateDao operateDao;
+
+    public ServiceController(final DatabaseOperateDao operateDao) {
+        this.operateDao = operateDao;
+    }
 
     @RequestMapping("/projectB/{value}")
     public String home(@PathVariable("value") String value) throws InterruptedException {
@@ -30,6 +33,6 @@ public class ServiceController {
         Thread.sleep(new Random().nextInt(2) * 1000);
         operateDao.saveUser(value);
         operateDao.selectUser(value);
-        return value + "-" + UUID.randomUUID().toString();
+        return value + "-" + UUID.randomUUID();
     }
 }

@@ -9,10 +9,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
+    private final DataSource dataSource;
 
-    @Autowired
-    private DataSource dataSource;
+    public DataInitializer(final DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
+    @Override
     public void run(String... strings) throws Exception {
         Connection connection = dataSource.getConnection();
         Statement statement = connection.createStatement();

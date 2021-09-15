@@ -15,9 +15,9 @@ import static test.skywalking.springcloud.test.projecta.config.Constant.SAMPLE_R
 
 @RestController
 public class ServiceController {
-
     private static final Logger logger = LogManager.getLogger(ServiceController.class);
-    private AtomicLong counter = new AtomicLong(0);
+
+    private final AtomicLong counter = new AtomicLong(0);
 
     @Autowired
     private RibbonCallService projectBServiceCall;
@@ -35,5 +35,4 @@ public class ServiceController {
         projectCServiceCall.call(name);
         return new Result(TraceContext.traceId());
     }
-
 }

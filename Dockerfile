@@ -1,4 +1,4 @@
-FROM ghcr.io/skyapmtest/agent
+FROM ghcr.io/apache/skywalking-java/jdk-8:latest
 
 ARG TARGET_JAR
 

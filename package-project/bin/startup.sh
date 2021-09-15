@@ -7,7 +7,6 @@ PRGDIR=`dirname "$PRG"`
 AGENT_DIR=$DEMO_HOME/skywalking-agent
 COLLECTOR_SERVER_LIST=localhost:18080
 KAFKA_VERSION=2.11-2.3.0
-EUREKA_HOSTS=localhost:8761
 REPORTER_SERVER_HOST=localhost
 REPORTER_SERVER_PORT=11800
 KAFKA_SERVER_HOST=localhost:9092
@@ -24,8 +23,6 @@ if [ ! -f "$DEMO_HOME/logs" ]; then
 fi
 
 echo "kill kafka service"
-ps -ef | grep eureka-service | awk '{print $2}' | xargs kill -9
-echo "kill kafka service"
 ps -ef | grep kafka_${KAFKA_VERSION} | awk '{print $2}' | xargs kill -9
 echo "kill projectA service"
 ps -ef | grep projectA | awk '{print $2}' | xargs kill -9
@@ -41,20 +38,17 @@ sh $DEMO_HOME/kafka_${KAFKA_VERSION}/bin/zookeeper-server-start.sh $DEMO_HOME/ka
 sleep 20
 sh $DEMO_HOME/kafka_${KAFKA_VERSION}/bin/kafka-server-start.sh $DEMO_HOME/kafka_${KAFKA_VERSION}/config/server.properties 2>/dev/null 1> /dev/null &
 
-echo "start eureka service"
-$_RUNJAVA -jar $DEMO_HOME/eureka-service/eureka-service.jar 2>/dev/null 1> /dev/null &
-
 if [ $? -eq 0 ]; then
   sleep 1
-	echo "eureka service started successfully!"
+	echo "kafka service started successfully!"
 else
-	echo "eureka service started failure!"
+	echo "kafka service started failure!"
 	exit 1
 fi
 
 echo "start project B service"
 if [ -f "${AGENT_DIR}/skywalking-agent.jar" ]; then
-     PROJECTB_OPTS="-javaagent:${AGENT_DIR}/skywalking-agent.jar -Dskywalking.collector.grpc_channel_check_interval=2 -Dskywalking.collector.app_and_service_register_check_interval=2 -Dcollector.discovery_check_interval=2 -Dskywalking.collector.backend_service=${COLLECTOR_SERVER_LIST} -Dskywalking.agent.service_name=business-zone::projectB -Dskywalking.logging.level=warn -Deureka.client.serviceUrl.defaultZone=http://${EUREKA_HOSTS}/eureka/ -Dskywalking.plugin.toolkit.log.grpc.reporter.server_host=${REPORTER_SERVER_HOST} -Dskywalking.plugin.toolkit.log.grpc.reporter.server_port=${REPORTER_SERVER_PORT} -Dskywalking.plugin.toolkit.log.grpc.reporter.max_message_size=10485760 -Dskywalking.plugin.toolkit.log.grpc.reporter.upstream_timeout=30"
+     PROJECTB_OPTS="-javaagent:${AGENT_DIR}/skywalking-agent.jar -Dskywalking.collector.grpc_channel_check_interval=2 -Dskywalking.collector.app_and_service_register_check_interval=2 -Dcollector.discovery_check_interval=2 -Dskywalking.collector.backend_service=${COLLECTOR_SERVER_LIST} -Dskywalking.agent.service_name=business-zone::projectB -Dskywalking.logging.level=warn -Dskywalking.plugin.toolkit.log.grpc.reporter.server_host=${REPORTER_SERVER_HOST} -Dskywalking.plugin.toolkit.log.grpc.reporter.server_port=${REPORTER_SERVER_PORT} -Dskywalking.plugin.toolkit.log.grpc.reporter.max_message_size=10485760 -Dskywalking.plugin.toolkit.log.grpc.reporter.upstream_timeout=30"
 fi
 echo "$_RUNJAVA ${PROJECTB_OPTS} -jar $DEMO_HOME/projectB/projectB.jar 2>/dev/null 1> /dev/null &"
 $_RUNJAVA ${PROJECTB_OPTS} -jar $DEMO_HOME/projectB/projectB.jar 2>/dev/null 1> /dev/null &
@@ -69,7 +63,7 @@ fi
 
 echo "start project C service"
 if [ -f "${AGENT_DIR}/skywalking-agent.jar" ]; then
-    PROJECTC_OPTS="-javaagent:${AGENT_DIR}/skywalking-agent.jar -Dskywalking.collector.grpc_channel_check_interval=2 -Dskywalking.collector.app_and_service_register_check_interval=2 -Dcollector.discovery_check_interval=2 -Dskywalking.collector.backend_service=${COLLECTOR_SERVER_LIST} -Dskywalking.agent.service_name=business-zone::projectC -Dbootstrap.servers=${KAFKA_SERVER_HOST} -Dskywalking.logging.level=warn -Deureka.client.serviceUrl.defaultZone=http://${EUREKA_HOSTS}/eureka/ -Dskywalking.plugin.toolkit.log.grpc.reporter.server_host=${REPORTER_SERVER_HOST} -Dskywalking.plugin.toolkit.log.grpc.reporter.server_port=${REPORTER_SERVER_PORT} -Dskywalking.plugin.toolkit.log.grpc.reporter.max_message_size=10485760 -Dskywalking.plugin.toolkit.log.grpc.reporter.upstream_timeout=30"
+    PROJECTC_OPTS="-javaagent:${AGENT_DIR}/skywalking-agent.jar -Dskywalking.collector.grpc_channel_check_interval=2 -Dskywalking.collector.app_and_service_register_check_interval=2 -Dcollector.discovery_check_interval=2 -Dskywalking.collector.backend_service=${COLLECTOR_SERVER_LIST} -Dskywalking.agent.service_name=business-zone::projectC -Dbootstrap.servers=${KAFKA_SERVER_HOST} -Dskywalking.logging.level=warn -Dskywalking.plugin.toolkit.log.grpc.reporter.server_host=${REPORTER_SERVER_HOST} -Dskywalking.plugin.toolkit.log.grpc.reporter.server_port=${REPORTER_SERVER_PORT} -Dskywalking.plugin.toolkit.log.grpc.reporter.max_message_size=10485760 -Dskywalking.plugin.toolkit.log.grpc.reporter.upstream_timeout=30"
 fi
 $_RUNJAVA ${PROJECTC_OPTS} -jar $DEMO_HOME/projectC/projectC.jar 2>/dev/null 1> /dev/null &
 
@@ -97,6 +91,6 @@ fi
 
 echo "start project A service"
 if [ -f "${AGENT_DIR}/skywalking-agent.jar" ]; then
-    PROJECTA_OPTS="-javaagent:${AGENT_DIR}/skywalking-agent.jar -Dskywalking.collector.grpc_channel_check_interval=2 -Dskywalking.collector.app_and_service_register_check_interval=2 -Dcollector.discovery_check_interval=2 -Dskywalking.collector.backend_service=${COLLECTOR_SERVER_LIST} -Dskywalking.agent.service_name=business-zone::projectA -Dskywalking.logging.level=warn -Deureka.client.serviceUrl.defaultZone=http://${EUREKA_HOSTS}/eureka/ -Dskywalking.plugin.toolkit.log.grpc.reporter.server_host=${REPORTER_SERVER_HOST} -Dskywalking.plugin.toolkit.log.grpc.reporter.server_port=${REPORTER_SERVER_PORT} -Dskywalking.plugin.toolkit.log.grpc.reporter.max_message_size=10485760 -Dskywalking.plugin.toolkit.log.grpc.reporter.upstream_timeout=30"
+    PROJECTA_OPTS="-javaagent:${AGENT_DIR}/skywalking-agent.jar -Dskywalking.collector.grpc_channel_check_interval=2 -Dskywalking.collector.app_and_service_register_check_interval=2 -Dcollector.discovery_check_interval=2 -Dskywalking.collector.backend_service=${COLLECTOR_SERVER_LIST} -Dskywalking.agent.service_name=business-zone::projectA -Dskywalking.logging.level=warn -Dskywalking.plugin.toolkit.log.grpc.reporter.server_host=${REPORTER_SERVER_HOST} -Dskywalking.plugin.toolkit.log.grpc.reporter.server_port=${REPORTER_SERVER_PORT} -Dskywalking.plugin.toolkit.log.grpc.reporter.max_message_size=10485760 -Dskywalking.plugin.toolkit.log.grpc.reporter.upstream_timeout=30"
 fi
 $_RUNJAVA ${PROJECTA_OPTS} -jar $DEMO_HOME/projectA/projectA.jar 2>/dev/null 1> /dev/null &

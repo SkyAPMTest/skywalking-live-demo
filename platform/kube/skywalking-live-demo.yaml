@@ -21,9 +21,13 @@ spec:
       containers:
         - image: ghcr.io/skyapmtest/projecta
           name: projecta
+          ports:
+            - containerPort: 8764
           env:
-            - name: EUREKA_HOST
-              value: eureka
+            - name: SW_AGENT_COLLECTOR_BACKEND_SERVICES
+              value: skywalking-oap:11800
+            - name: SW_AGENT_NAME
+              value: projectA
           resources: { }
 status: { }
 ---
@@ -37,7 +41,7 @@ spec:
     app: project-a
   ports:
     - name: http
-      port: 8764
+      port: 80
       targetPort: 8764
 
 ---
@@ -63,6 +67,13 @@ spec:
       containers:
         - image: ghcr.io/skyapmtest/projectb
           name: projectb
+          ports:
+            - containerPort: 8762
+          env:
+            - name: SW_AGENT_COLLECTOR_BACKEND_SERVICES
+              value: skywalking-oap:11800
+            - name: SW_AGENT_NAME
+              value: projectB
           resources: { }
 status: { }
 ---
@@ -76,7 +87,7 @@ spec:
     app: project-b
   ports:
     - name: http
-      port: 8762
+      port: 80
       targetPort: 8762
 
 ---
@@ -102,6 +113,15 @@ spec:
       containers:
         - image: ghcr.io/skyapmtest/projectc
           name: projectc
+          ports:
+            - containerPort: 8763
+          env:
+            - name: BOOTSTRAP_SERVERS
+              value: kafka:9092
+            - name: SW_AGENT_COLLECTOR_BACKEND_SERVICES
+              value: skywalking-oap:11800
+            - name: SW_AGENT_NAME
+              value: projectC
           resources: { }
 status: { }
 ---
@@ -115,7 +135,7 @@ spec:
     app: project-c
   ports:
     - name: http
-      port: 8763
+      port: 80
       targetPort: 8763
 
 ---
@@ -141,17 +161,15 @@ spec:
       containers:
         - image: ghcr.io/skyapmtest/projectd
           name: projectd
+          env:
+            - name: SW_AGENT_COLLECTOR_BACKEND_SERVICES
+              value: skywalking-oap:11800
+            - name: SW_AGENT_NAME
+              value: projectD
+            - name: BOOTSTRAP_SERVERS
+              value: kafka:9092
           resources: { }
 status: { }
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: project-d
-spec:
-  type: ClusterIP
-  selector:
-    app: project-d
 
 ---
 apiVersion: apps/v1
@@ -159,35 +177,132 @@ kind: Deployment
 metadata:
   creationTimestamp: null
   labels:
-    app: eureka
-  name: eureka
+    app: zookeeper
+  name: zookeeper
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: eureka
+      app: zookeeper
   strategy: { }
   template:
     metadata:
       creationTimestamp: null
       labels:
-        app: eureka
+        app: zookeeper
     spec:
       containers:
-        - image: ghcr.io/skyapmtest/eureka-service
-          name: eureka-service
+        - image: zookeeper:3.4
+          name: zookeeper
+          env:
+            - name: ALLOW_ANONYMOUS_LOGIN
+              value: "yes"
           resources: { }
 status: { }
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: eureka
+  name: zookeeper
 spec:
   type: ClusterIP
   selector:
-    app: eureka
+    app: zookeeper
   ports:
-    - name: http
-      port: 8761
-      targetPort: 8761
+    - name: zookeeper
+      port: 2181
+      targetPort: 2181
+      protocol: TCP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: kafka
+  name: kafka
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka
+  strategy: { }
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: kafka
+    spec:
+      containers:
+        - image: bitnami/kafka:2.4.1
+          name: kafka
+          ports:
+            - containerPort: 9092
+          env:
+            - name: KAFKA_ZOOKEEPER_CONNECT
+              value: zookeeper:2181
+            - name: KAFKA_BROKER_ID
+              value: "10"
+            - name: ALLOW_PLAINTEXT_LISTENER
+              value: "yes"
+          resources: { }
+status: { }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka
+spec:
+  type: ClusterIP
+  selector:
+    app: kafka
+  ports:
+    - name: kafka
+      port: 9092
+      targetPort: 9092
+      protocol: TCP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trafficgenerator
+  labels:
+    app: trafficgenerator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trafficgenerator
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: trafficgenerator
+    spec:
+      containers:
+        - name: trafficgenerator
+          image: appropriate/curl
+          args:
+            - /bin/sh
+            - -c
+            - |
+              while :; do
+                curl http://project-a/projectA/test
+                sleep 1
+              done
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: trafficgenerator
+  labels:
+    app: trafficgenerator
+spec:
+  ports:
+    - port: 9080
+      name: http
+  selector:
+    app: trafficgenerator

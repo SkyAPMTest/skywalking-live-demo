@@ -16,11 +16,15 @@
  */
 package test.skywalking.springcloud.test.projectd;
 
-public class Consumer_Main {
+public class ProjectD {
     private static final String topicName = "test-trace-topic";
 
     public static void main(String[] args) throws InterruptedException {
-        String bootstrapServers = System.getProperty("bootstrap.servers", "127.0.0.1:9092");
+        String bootstrapServers = System.getenv("BOOTSTRAP_SERVERS");
+        bootstrapServers =
+            bootstrapServers != null && !bootstrapServers.trim().isEmpty()
+            ? bootstrapServers
+            : "127.0.0.1:9092";
         new MessageConsumer(bootstrapServers, topicName).start();
         Thread.currentThread().join();
     }

@@ -19,12 +19,6 @@
         </file>
 
         <file>
-            <source>${project.basedir}/../eureka-service/target/eureka-service.jar</source>
-            <outputDirectory>/eureka-service</outputDirectory>
-            <fileMode>0644</fileMode>
-        </file>
-
-        <file>
             <source>${project.basedir}/../projectA/target/projectA.jar</source>
             <outputDirectory>/projectA</outputDirectory>
             <fileMode>0644</fileMode>

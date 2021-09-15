@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @FeignClient(value = "projectC")
 public interface FeignCallService {
-
     @RequestMapping(value = "/projectC/{name}", method = RequestMethod.GET)
     String call(@PathVariable(value = "name") String name);
 }
