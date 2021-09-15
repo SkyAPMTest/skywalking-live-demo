@@ -29,9 +29,9 @@ import org.apache.skywalking.apm.toolkit.trace.Trace;
 import static test.skywalking.springcloud.test.projectd.config.Constant.SAMPLE_RATE;
 
 public class MessageConsumer extends Thread {
+    private static final Logger logger = LogManager.getLogger(MessageConsumer.class);
 
-    private Logger logger = LogManager.getLogger(MessageConsumer.class);
-    private AtomicLong counter = new AtomicLong(0);
+    private final AtomicLong counter = new AtomicLong(0);
     private final KafkaConsumer<String, String> consumer;
 
     public MessageConsumer(String bootstrapServers, String topicName) {
