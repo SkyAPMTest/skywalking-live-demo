@@ -34,8 +34,6 @@ jobs:
   build-demo:
     runs-on: ubuntu-latest
     timeout-minutes: 90
-    needs:
-      - build-agent
     steps:
       - uses: actions/checkout@v2
         with:

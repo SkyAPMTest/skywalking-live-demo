@@ -4,14 +4,52 @@ services:
   projecta:
     image: ghcr.io/skyapmtest/projecta
     environment:
-      SW_AGENT_NAME: projectA
+      - SW_AGENT_NAME=projectA
 
   projectb:
     image: ghcr.io/skyapmtest/projectb
     environment:
-      SW_AGENT_NAME: projectB
+      - SW_AGENT_NAME=projectB
 
   projectc:
     image: ghcr.io/skyapmtest/projectc
     environment:
-      SW_AGENT_NAME: projectC
+      - SW_AGENT_NAME=projectC
+
+  projectd:
+    image: ghcr.io/skyapmtest/projectd
+    environment:
+      - SW_AGENT_NAME=projectC
+      - BOOTSTRAP_SERVERS=kafka
+
+  zookeeper:
+    image: zookeeper:3.4
+    hostname: zookeeper
+    expose:
+      - 2181
+    networks:
+      - e2e
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    healthcheck:
+      test: ["CMD", "sh", "-c", "nc -nz 127.0.0.1 2181"]
+      interval: 5s
+      timeout: 60s
+      retries: 120
+
+  kafka:
+    image: bitnami/kafka:2.4.1
+    expose:
+      - 9092
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_BROKER_ID=10
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "kafka-topics.sh", "--list", "--zookeeper", "zookeeper:2181"]
+      interval: 5s
+      timeout: 60s
+      retries: 120
