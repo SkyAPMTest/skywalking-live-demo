@@ -1,4 +1,4 @@
-version: '3.8'
+version: '2.1'
 
 services:
   projecta:
@@ -24,15 +24,12 @@ services:
 
   zookeeper:
     image: zookeeper:3.4
-    hostname: zookeeper
     expose:
       - 2181
-    networks:
-      - e2e
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
     healthcheck:
-      test: ["CMD", "sh", "-c", "nc -nz 127.0.0.1 2181"]
+      test: [ "CMD", "sh", "-c", "nc -nz 127.0.0.1 2181" ]
       interval: 5s
       timeout: 60s
       retries: 120
@@ -49,7 +46,7 @@ services:
       zookeeper:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "kafka-topics.sh", "--list", "--zookeeper", "zookeeper:2181"]
+      test: [ "CMD", "kafka-topics.sh", "--list", "--zookeeper", "zookeeper:2181" ]
       interval: 5s
       timeout: 60s
       retries: 120
