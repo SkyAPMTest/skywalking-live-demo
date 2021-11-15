@@ -1,3 +1,8 @@
+# This repository has been replaced by official demo setup.
+
+**Go to [Apache SkyWalking Showcase](https://github.com/apache/skywalking-showcase) repository for more details.**
+
+_________________________
 # SkyWalking Live Demo
 
 ## Quick Start
